@@ -24,13 +24,13 @@ fn index(input: Result<Form<Parameters>, FormError>) -> Json<Message> {
         Err(FormDataError::Io(_)) => {
             return Json(Message {
                 response_type: "ephemeral".to_string(),
-                text: format!("Form input was inalid UTF-8."),
+                text: format!("Form input was invalid UTF-8."),
             });
         },
         Err(FormDataError::Malformed(f)) | Err(FormDataError::Parse(_, f)) => {
             return Json(Message {
                 response_type: "ephemeral".to_string(),
-                text: format!("Invalid form input: {}", f),
+                text: format!("Invalid form input: {}", f.into_inner().user_id),
             });
         }
     };
