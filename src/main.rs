@@ -10,7 +10,7 @@ fn main() {
     rocket::ignite().mount("/api", routes![response]).launch();
 }
 
-#[post("/api", format = "application/x-www-form-urlencoded", data = "<input>")]
+#[post("/api", data = "<input>")]
 fn response(input: Result<Form<Parameters>, FormError>) -> Json<Message> {
     // let parameters = input.into_inner();
 
