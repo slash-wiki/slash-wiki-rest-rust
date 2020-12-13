@@ -5,6 +5,7 @@
 use rocket::request::{Form, FormError, FormDataError};
 use rocket_contrib::json::Json;
 use serde::{Serialize, Deserialize};
+use urlencoding::decode;
 
 fn main() {
     rocket::ignite().mount("/", routes![index]).launch();
@@ -28,9 +29,10 @@ fn index(input: Result<Form<Parameters>, FormError>) -> Json<Message> {
             });
         },
         Err(FormDataError::Malformed(f)) | Err(FormDataError::Parse(_, f)) => {
+            let decoded = decode(f);
             return Json(Message {
                 response_type: "ephemeral".to_string(),
-                text: format!("Invalid form input: {}", f.into_inner().user_id),
+                text: format!("Invalid form input: {}", decoded.unwrap()),
             });
         }
     };
