@@ -1,1 +1,1 @@
-web: ROCKET_PORT=$PORT ./target/release/slash-wiki-rest-rust
+web: ROCKET_PORT=$PORT target/release/slash-wiki-rest-rust
