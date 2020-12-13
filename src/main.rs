@@ -1,8 +1,8 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 #[macro_use] extern crate rocket;
 
-use std::time::SystemTime;
-use rocket::request::Form;
+// use std::time::SystemTime;
+use rocket::request::{Form, FormError, FormDataError};
 use rocket_contrib::json::Json;
 use serde::{Serialize, Deserialize};
 
@@ -11,13 +11,34 @@ fn main() {
 }
 
 #[post("/api", format = "application/x-www-form-urlencoded", data = "<input>")]
-fn response(input: Form<Parameters>) -> Json<Message> {
-    let parameters = input.into_inner();
+fn response(input: Result<Form<Parameters>, FormError>) -> Json<Message> {
+    // let parameters = input.into_inner();
 
-    Json(Message {
-        response_type: "in_channel".to_string(),
-        text: format!("Hello {}, the date and time is {:#?}.", parameters.user_id, SystemTime::now()),
-    })
+    match input {
+        Ok(form) => {
+            return Json(Message {
+                response_type: "in_channel".to_string(),
+                text: format!("{:?}", &*form),
+            });
+        },
+        Err(FormDataError::Io(_)) => {
+            return Json(Message {
+                response_type: "ephemeral".to_string(),
+                text: format!("Form input was inalid UTF-8."),
+            });
+        },
+        Err(FormDataError::Malformed(f)) | Err(FormDataError::Parse(_, f)) => {
+            return Json(Message {
+                response_type: "ephemeral".to_string(),
+                text: format!("Invalid form input: {}", f),
+            });
+        }
+    };
+
+    // Json(Message {
+    //     response_type: "in_channel".to_string(),
+    //     text: format!("Hello {}, the date and time is {:#?}.", parameters.user_id, SystemTime::now()),
+    // })
 }
 
 #[derive(Debug, FromForm)]
