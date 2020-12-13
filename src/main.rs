@@ -7,11 +7,11 @@ use rocket_contrib::json::Json;
 use serde::{Serialize, Deserialize};
 
 fn main() {
-    rocket::ignite().mount("/api", routes![response]).launch();
+    rocket::ignite().mount("/", routes![index]).launch();
 }
 
-#[post("/api", data = "<input>")]
-fn response(input: Result<Form<Parameters>, FormError>) -> Json<Message> {
+#[post("/", data = "<input>")]
+fn index(input: Result<Form<Parameters>, FormError>) -> Json<Message> {
     // let parameters = input.into_inner();
 
     match input {
