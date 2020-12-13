@@ -7,7 +7,7 @@ use rocket_contrib::json::Json;
 use serde::{Serialize, Deserialize};
 
 fn main() {
-    rocket::ignite().mount("/", routes![response]).launch();
+    rocket::ignite().mount("/api", routes![response]).launch();
 }
 
 #[post("/api", data = "<input>")]
